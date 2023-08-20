@@ -30,7 +30,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _message = 'Hello!';
 
+  //ステートクラス内にステートの変更のための処置を用意。
   void _setMessage() {
+    //setStateメソッドは、ステートの更新をステートクラスに知らせる働きをする。
+    //このメソッドに必要な値の変更処理を用意しておく。
+    //更新時に下記のbuildメソッドが再実行されて、このステートクラスのフィールドを使っているところ（今回は_messageの箇所）が変更される。
     setState(() {
       _message = 'タップしました!';
     });
@@ -40,16 +44,23 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //widgetというのは、Stateクラスに用意されるプロパティで、このステートが設定されているウィジェット（ここではMyHomePageクラス)のインスタンスが代入されている。
         title: Text(widget.title),
       ),
       body: Text(
         _message,
         style: TextStyle(fontSize: 32.0),
       ),
+      //フローティングアクションボタンは、丸いアイコンを表示したボタン
+      //他のウィジェットの配置とは関係なく、いつも常に決まった場所（画面の右下あたり）に配置される。
       floatingActionButton: FloatingActionButton(
+        //ボタンをクリックした時の処理
+        //通常割り当てるメソッド名を指示する。
         onPressed: _setMessage,
+        //ユーザーがボタンをタップ、ロングタップした時にメッセージを表示する。
         tooltip: 'set message.',
+        //このウィジェット内に組み込まれているウィジェット類をまとめたもの。
+        //ここでは、表示するアイコンをIconで用意してある。
+        //Iconsクラスは主なアイコンを示す値をプロパティとしてまとめたもの。
         child: Icon(Icons.star),
       ),
     );
