@@ -6,59 +6,39 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-  final title = 'Flutterサンプル';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: MyHomePage(title: this.title),
+      //テーマを指定するためのもの
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({title = 'Flutter Demo'}) : super();
+  //Keyはウィジェットを識別するためのIDのようなもの
+  //上記のMyAppクラスのMyHomePageインスタンスを作成している部分を見るとわかるが、Keyは用意されなくとも自動的に割り当てられる
+  //ただ、実際にはこのKeyは特に使われておらず、必要ないことも多いので省略可。
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-//ここでは、複数の値で構成されたデータを扱うクラスとしてDataというクラスを定義する。
-//複雑な値を扱う場合、必要な情報をまとめたクラスとして定義し利用するのが一般的
-class Data {
-  //プロパティの用意
-  int _price;
-  String _name;
-  //引数で受け取った値をプロパティに設置するコンストラクタ
-  Data(this._name, this._price) : super();
-
-  //内容をテキストにまとめて出力するようにしている。
-  @override
-  String toString() {
-    // TODO: implement toString
-    return _name + ':' + _price.toString() + '円';
-  }
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //Dataインスタンスをまとめたリストを用意
-  //後でリストを改変することがないため、static finalに設定。
-  static final _data = [
-    Data('Apple', 200),
-    Data('Orange', 150),
-    Data('Peach', 300)
-  ];
-  //リストの中から選んだDataを保管するプロパティの用意。
-  //これで起動時に最初のDataが表示されるようになる。
-  Data _item = _data[0];
+  //_counterフィールドの用意
+  int _counter = 0;
 
-  //shuffleはリストの項目をランダムに入れ替えるメソッド。
-  //firstは最初の項目のプロパティ
-  //これによりランダムに1つ取り出せる。
-  void _setData() {
+  //_counterフィールドを1つずつ足すメソッドの用意
+  void _incrementCounter() {
     setState(() {
-      _item = (_data..shuffle()).first;
+      _counter++;
     });
   }
 
@@ -66,16 +46,26 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Set data'),
+        title: Text(widget.title),
       ),
-      body: Text(
-        _item.toString(),
-        style: TextStyle(fontSize: 32.0),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('You have pushed the button this many times:'),
+            Text(
+              //この$_counterという値は、変数_counterをテキストリテラル内に埋め込んでいる
+              //Dartでは、このように「$変数」という形で変数をリテラル内に埋め込むことができる。
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _setData,
-        tooltip: 'set message.',
-        child: Icon(Icons.star),
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
       ),
     );
   }
