@@ -17,26 +17,48 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//MyHomePageというクラスをStatefulWidgetクラスとして作成。
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({required this.title}) : super();
-
-  final String title;
+  const MyHomePage({title = 'Flutter Demo'}) : super();
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  String _message = 'Hello!';
+//ここでは、複数の値で構成されたデータを扱うクラスとしてDataというクラスを定義する。
+//複雑な値を扱う場合、必要な情報をまとめたクラスとして定義し利用するのが一般的
+class Data {
+  //プロパティの用意
+  int _price;
+  String _name;
+  //引数で受け取った値をプロパティに設置するコンストラクタ
+  Data(this._name, this._price) : super();
 
-  //ステートクラス内にステートの変更のための処置を用意。
-  void _setMessage() {
-    //setStateメソッドは、ステートの更新をステートクラスに知らせる働きをする。
-    //このメソッドに必要な値の変更処理を用意しておく。
-    //更新時に下記のbuildメソッドが再実行されて、このステートクラスのフィールドを使っているところ（今回は_messageの箇所）が変更される。
+  //内容をテキストにまとめて出力するようにしている。
+  @override
+  String toString() {
+    // TODO: implement toString
+    return _name + ':' + _price.toString() + '円';
+  }
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  //Dataインスタンスをまとめたリストを用意
+  //後でリストを改変することがないため、static finalに設定。
+  static final _data = [
+    Data('Apple', 200),
+    Data('Orange', 150),
+    Data('Peach', 300)
+  ];
+  //リストの中から選んだDataを保管するプロパティの用意。
+  //これで起動時に最初のDataが表示されるようになる。
+  Data _item = _data[0];
+
+  //shuffleはリストの項目をランダムに入れ替えるメソッド。
+  //firstは最初の項目のプロパティ
+  //これによりランダムに1つ取り出せる。
+  void _setData() {
     setState(() {
-      _message = 'タップしました!';
+      _item = (_data..shuffle()).first;
     });
   }
 
@@ -44,23 +66,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Set data'),
       ),
       body: Text(
-        _message,
+        _item.toString(),
         style: TextStyle(fontSize: 32.0),
       ),
-      //フローティングアクションボタンは、丸いアイコンを表示したボタン
-      //他のウィジェットの配置とは関係なく、いつも常に決まった場所（画面の右下あたり）に配置される。
       floatingActionButton: FloatingActionButton(
-        //ボタンをクリックした時の処理
-        //通常割り当てるメソッド名を指示する。
-        onPressed: _setMessage,
-        //ユーザーがボタンをタップ、ロングタップした時にメッセージを表示する。
+        onPressed: _setData,
         tooltip: 'set message.',
-        //このウィジェット内に組み込まれているウィジェット類をまとめたもの。
-        //ここでは、表示するアイコンをIconで用意してある。
-        //Iconsクラスは主なアイコンを示す値をプロパティとしてまとめたもの。
         child: Icon(Icons.star),
       ),
     );
